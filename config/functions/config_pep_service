@@ -1,0 +1,176 @@
+##############################################################################
+# Copyright (c) Members of the EGEE Collaboration. 2004. 
+# See http://www.eu-egee.org/partners/ for details on the copyright 
+# holders.  
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); 
+# you may not use this file except in compliance with the License. 
+# You may obtain a copy of the License at 
+#
+#    http://www.apache.org/licenses/LICENSE-2.0 
+#
+# Unless required by applicable law or agreed to in writing, software 
+# distributed under the License is distributed on an "AS IS" BASIS, 
+# WITHOUT WARRANTIES OR CONDITIONS 
+# OF ANY KIND, either express or implied. 
+# See the License for the specific language governing permissions and 
+# limitations under the License.
+##############################################################################
+#
+# NAME :        config_pep_service
+#
+# DESCRIPTION : This function configures the PEP daemon server in the Autorization Framework. 
+#
+# AUTHORS :     Maria.Alandes@cern.ch
+#               valery.tschopp@switch.ch
+#
+# NOTES : 
+#
+# YAIM MODULE:  glite-yaim-pep-server
+#                 
+##############################################################################
+
+function config_pep_service_check () {
+
+  requires $1 CONFIG_PEP PEP_HOME PEP_CONF_INI PEP_ENTITY_ID PEP_HOST PEP_PORT PEP_ADMIN_PORT PEP_ADMIN_PASSWORD \
+              PEP_PDP_ENDPOINTS PEP_MAX_CACHEDRESP X509_HOST_CERT X509_HOST_KEY X509_CERT_DIR \
+              X509_VOMS_DIR GRIDMAPFILE GROUPMAPFILE GRIDMAPDIR
+  return 0
+
+}
+
+function config_pep_service_setenv () {
+
+    yaimlog DEBUG "No environment setting"
+
+}
+
+function config_pep_service () {
+
+  timestamp=`date +%Y%m%d%H%M`
+  datetime=`date +"%d/%m/%Y %H:%M"`
+
+  if [ "x${CONFIG_PEP}" = "xno" ]; then
+  	yaimlog INFO "Skipping PEP configuration since CONFIG_PEP is set to 'no'"
+  	return
+  fi
+  
+  ####@ Checking whether PEP is actually installed
+  yaimlog DEBUG "Checking whether PEP is actually installed"
+  if [ ! -x /usr/sbin/pepdctl ]; then
+    yaimlog ERROR "/usr/sbin/pepdctl doesn't exist. Please, make sure PEP is installed in your system"
+    yestr ${YEX_NOSUCHFILE}
+    yaimlog ERROR "${YERRORSTR}"
+    exit ${YEX_NOSUCHFILE}
+  fi
+  if [ ! -x /etc/init.d/argus-pepd ]; then
+    yaimlog ERROR "/etc/init.d/argus-pepd doesn't exist. Please, make sure PEP is installed in your system"
+    yestr ${YEX_NOSUCHFILE}
+    yaimlog ERROR "${YERRORSTR}"
+    exit ${YEX_NOSUCHFILE}
+  fi
+
+
+  ####@ Stop PEP
+  yaimlog INFO "Stopping PEP daemon service..."
+  # PEP_HOME needs to exist in the environment to be able to start the service
+  PEPD_HOME=${PEP_HOME} /usr/sbin/pepdctl stop
+  sleep 5
+
+  if [ "x${CONFIG_PEP}" = "xyes" ]; then
+    ####@ Making a backup copy of the configuration files
+    yaimlog DEBUG "Making a backup copy of the configuration files"
+    cp ${PEP_CONF_INI} ${PEP_CONF_INI}.yaim${timestamp}
+
+    ####@ Creating the ${PEP_CONF_INI} file
+    yaimlog INFO "Create the PEP Server ${PEP_CONF_INI} file"
+    cat <<EOF > ${PEP_CONF_INI}
+#
+# Configuration file created by YAIM on ${datetime}
+#
+# Argus PEP Server configuration
+#
+# Documentation: https://twiki.cern.ch/twiki/bin/view/EGEE/AuthZPEPDConfig
+# 
+[SERVICE]
+entityId = ${PEP_ENTITY_ID}
+hostname = ${PEP_HOST}
+port = ${PEP_PORT}
+adminPort = ${PEP_ADMIN_PORT}
+adminPassword = ${PEP_ADMIN_PASSWORD}
+
+pips = REQVALIDATOR_PIP OPENSSLSUBJECT_PIP GLITEXACMLPROFILE_PIP
+obligationHandlers = ACCOUNTMAPPER_OH
+
+[PDP]
+pdps = ${PEP_PDP_ENDPOINTS}
+
+[SECURITY]
+servicePrivateKey = ${X509_HOST_KEY}
+serviceCertificate = ${X509_HOST_CERT}
+trustInfoDir = ${X509_CERT_DIR}
+enableSSL = true
+requireClientCertAuthentication = true
+
+#
+# Policy Information Points (PIP) configuration
+#
+[REQVALIDATOR_PIP]
+parserClass = org.glite.authz.pep.pip.provider.RequestValidatorPIPIniConfigurationParser
+validateRequestSubjects = true
+validateRequestResources = true
+validateRequestAction = true
+validateRequestEnvironment = false
+
+[OPENSSLSUBJECT_PIP]
+parserClass = org.glite.authz.pep.pip.provider.OpenSSLSubjectPIPIniConfigurationParser
+opensslSubjectAttributeIDs = http://glite.org/xacml/attribute/subject-issuer urn:oasis:names:tc:xacml:1.0:subject:subject-id
+opensslSubjectAttributeDatatypes = http://www.w3.org/2001/XMLSchema#string
+
+[GLITEXACMLPROFILE_PIP]
+parserClass = org.glite.authz.pep.pip.provider.AuthorizationProfilePIPIniConfigurationParser
+vomsInfoDir = ${X509_VOMS_DIR}
+acceptedProfileIDs = http://glite.org/xacml/profile/grid-ce/1.0 http://glite.org/xacml/profile/grid-wn/1.0
+
+[WHITELIST_PIP]
+parserClass = org.glite.authz.pep.pip.provider.AttributeWhitelistPIPIniConfigurationParser
+acceptedSubjectAttributes = urn:oasis:names:tc:xacml:1.0:subject:key-info
+
+#
+# Obligation Handlers (OH) configuration
+#
+[ACCOUNTMAPPER_OH]
+parserClass = org.glite.authz.pep.obligation.dfpmap.DFPMObligationHandlerConfigurationParser
+accountMapFile = ${GRIDMAPFILE} 
+groupMapFile = ${GROUPMAPFILE}
+gridMapDir = ${GRIDMAPDIR}
+useSecondaryGroupNamesForMapping = true
+
+EOF
+
+  fi
+
+  ####@ Fix files and directories permissions (TODO: use ETICS package.fileRights property)
+  yaimlog INFO "Fixing files and directory permissions in ${PEP_HOME}"
+  #chmod -R o=-rwx ${PEP_HOME}/sbin
+  chmod -R o=-rwx ${PEP_HOME}/conf
+  chmod -R o=-rwx ${PEP_HOME}/logs
+
+  ####@ Add the script to the service list
+  /sbin/chkconfig --add argus-pepd
+
+
+  ####@ Start the PEP service
+  yaimlog INFO "Starting PEP Server service..."
+
+  # PEP_HOME needs to exist in the environment to be able to start the service
+  PEPD_HOME=${PEP_HOME} /etc/init.d/argus-pepd start
+
+  if [ $? -eq 1 ]; then
+    yaimlog ERROR "Error starting PEP Server service"
+    exit 1
+  fi
+
+  return 0
+}
+

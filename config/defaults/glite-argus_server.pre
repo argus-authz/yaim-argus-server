@@ -1,0 +1,120 @@
+##############################################################################
+# Copyright (c) Members of the EGEE Collaboration. 2004.
+# See http://www.eu-egee.org/partners/ for details on the copyright
+# holders.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS
+# OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+##############################################################################
+#
+# NAME :        glite-argus-server.pre
+#
+# DESCRIPTION : This configuration file contains the variables needed to configure the
+#               Authorization Framework whose default values do not need to be changed by sys admins
+#               unless they are interested in a more advanced configuration. This file
+#               should be used together with site-info.def and/or services/glite-argus-server.
+#
+# AUTHORS :     Maria.Alandes.Pradillo@cern.ch
+#               valery.tschopp@switch.ch
+#               andrea.ceccanti@cnaf.infn.it
+#
+# NOTES :
+#
+# YAIM MODULE:  glite-yaim-argus-server
+#
+##############################################################################
+
+# ARGUS_HOME stores the FQDN hostname of the machine
+ARGUS_HOST=`hostname -f`
+
+#########################
+# PAP related variables #
+#########################
+
+# Set this variable to 'no' if you don't want yaim to create the pap_configuration.ini file
+CONFIG_PAP=yes
+
+# The hostname or IP address the service will bind to 
+# Set this variable to another value if PAP_HOST is not installed in the same
+# host as PDP and PEP.
+PAP_HOST=${ARGUS_HOST}
+
+# PAP standalone service port
+PAP_PORT=8150
+
+# PAP standalone shutdown service port
+PAP_SHUTDOWN_PORT=8151
+
+# PAP shutdown command 
+PAP_SHUTDOWN_COMMAND=papshutdown_`date +%Y%m%d%H%M%S`
+
+# The polling interval (in seconds) for retrieving remote policies
+PAP_POLL_INTERVAL=14400
+
+# Comma separated list of pap aliases. Example: alias-1, alias-2, ..., alias-n. 
+# Defines the order of evaluation of the policies of the paps, that means that 
+# the policies of pap "alias-1" are evaluated for first, then the policies 
+# of pap "alias-2" and so on. 
+PAP_ORDERING=default
+
+# Forces a consistency check of the repository at startup. 
+PAP_CONSISTENCY_CHECK=false
+
+# if set to true automatically fixes problems detected 
+# by the consistency check (usually means deleting the corrupted policies). 
+PAP_CONSISTENCY_CHECK_REPAIR=false
+
+#########################
+# PDP related variables #
+#########################
+
+# Set this variable to 'no' if you don't want yaim to create the pdp.ini file
+CONFIG_PDP=yes
+
+# Set this variable to another value if PDP_HOST is not installed in the same
+# host as PAP and PEP.
+PDP_HOST=localhost
+
+# PDP service port
+PDP_PORT=8152
+
+# PDP admin service port and password for commands (shutdown, reload policy, ...)
+PDP_ADMIN_PORT=8153
+PDP_ADMIN_PASSWORD=pdpadmin_`date +%Y%m%d%H%M%S`
+
+# The number of minutes the PDP will retain (cache) a policy 
+# retrieved from the PAP. After this time is passed the PDP will 
+# again call out to the PAP and retrieve the policy
+PDP_RETENTION_INTERVAL=240
+
+#########################
+# PEP related variables #
+#########################
+
+# Set this variable to 'no' if you don't want yaim to create the pepd.ini file
+CONFIG_PEP=yes
+
+# Set this variable to another value if PEP_HOST is not installed in the same
+# host as PAP and PDP. But remember to use the hostname and not 127.0.0.1 !
+PEP_HOST=${ARGUS_HOST}
+
+# PEP daemon service port
+PEP_PORT=8154
+
+# PEP dameon admin service port and password for commands (shutdown, clear cache, ...)
+PEP_ADMIN_PORT=8155
+PEP_ADMIN_PASSWORD=pepdadmin_`date +%Y%m%d%H%M%S`
+
+# The maximum number of responses from any PDP that will be cached. 
+# Setting this value to 0 (zero) will disable caching. 
+PEP_MAX_CACHEDRESP=500

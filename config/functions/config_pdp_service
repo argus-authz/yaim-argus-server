@@ -1,0 +1,131 @@
+##############################################################################
+# Copyright (c) Members of the EGEE Collaboration. 2004. 
+# See http://www.eu-egee.org/partners/ for details on the copyright 
+# holders.  
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); 
+# you may not use this file except in compliance with the License. 
+# You may obtain a copy of the License at 
+#
+#    http://www.apache.org/licenses/LICENSE-2.0 
+#
+# Unless required by applicable law or agreed to in writing, software 
+# distributed under the License is distributed on an "AS IS" BASIS, 
+# WITHOUT WARRANTIES OR CONDITIONS 
+# OF ANY KIND, either express or implied. 
+# See the License for the specific language governing permissions and 
+# limitations under the License.
+##############################################################################
+#
+# NAME :        config_pdp_service
+#
+# DESCRIPTION : This function configures the PDP server in the Autorization Framework. 
+#
+# AUTHORS :     Maria.Alandes@cern.ch
+#               valery.tschopp@switch.ch
+#
+# NOTES : 
+#
+# YAIM MODULE:  glite-yaim-argus-server
+#                 
+##############################################################################
+
+function config_pdp_service_check () {
+    requires $1 PDP_HOME PDP_CONF_INI PDP_ENTITY_ID PDP_HOST PDP_PORT PDP_ADMIN_PORT PDP_ADMIN_PASSWORD \
+                PDP_PAP_ENDPOINTS PDP_RETENTION_INTERVAL X509_HOST_CERT X509_HOST_KEY X509_CERT_DIR 
+ return $?
+
+}
+
+function config_pdp_service_setenv () {
+
+    yaimlog DEBUG "No environment setting"
+
+}
+
+function config_pdp_service () {
+
+  timestamp=`date +%Y%m%d%H%M`
+  datetime=`date +"%d/%m/%Y %H:%M"`
+
+  if [ "x${CONFIG_PDP}" = "xno" ]; then
+  	yaimlog INFO "Skipping PDP configuration since CONFIG_PDP is set to 'no'"
+  	return
+  fi
+  
+  ####@ Checking whether PDP is actually installed
+  yaimlog DEBUG "Checking whether PDP is actually installed"
+  if [ ! -f /usr/sbin/pdpctl ]; then
+    yaimlog ERROR "/usr/sbin/pdpctl doesn't exist. Please, make sure PDP is installed in your system"
+    yestr ${YEX_NOSUCHFILE}
+    yaimlog ERROR "${YERRORSTR}"
+    exit ${YEX_NOSUCHFILE}
+  fi
+
+  ####@ Stop PDP
+  yaimlog INFO "Stopping PDP service..."
+  # PDP_HOME needs to exist in the environment to be able to start the service
+  PDP_HOME=${PDP_HOME} /usr/sbin/pdpctl stop
+  sleep 5
+
+  if [ "x${CONFIG_PDP}" = "xyes" ]; then
+    ####@ Making a backup copy of the configuration files
+    yaimlog DEBUG "Making a backup copy of the configuration files"
+    cp ${PDP_CONF_INI} ${PDP_CONF_INI}.yaim${timestamp}
+
+    ####@ Creating the ${PDP_CONF_INI} file
+    yaimlog INFO "Create the PDP ${PDP_CONF_INI} file"
+    cat <<EOF > ${PDP_CONF_INI}
+#
+# Configuration file created by YAIM on ${datetime}
+#
+# Argus PDP configuration
+# 
+# Documentation: https://twiki.cern.ch/twiki/bin/view/EGEE/AuthZPDPConfig
+# 
+[SERVICE]
+entityId = ${PDP_ENTITY_ID}
+hostname = ${PDP_HOST}
+port = ${PDP_PORT}
+adminPort = ${PDP_ADMIN_PORT}
+adminPassword = ${PDP_ADMIN_PASSWORD}
+
+[POLICY]
+paps = ${PDP_PAP_ENDPOINTS}
+retentionInterval = ${PDP_RETENTION_INTERVAL}
+
+[SECURITY]
+servicePrivateKey = ${X509_HOST_KEY}
+serviceCertificate = ${X509_HOST_CERT}
+trustInfoDir = ${X509_CERT_DIR}
+
+EOF
+
+  fi
+
+  ####@ Fix files and directories permissions (TODO: use ETICS package.fileRights property)
+  yaimlog INFO "Fixing files and directory permissions"
+  # chmod -R o=-rwx ${PDP_HOME}/sbin
+  chmod -R o=-rwx ${PDP_HOME}/conf
+  chmod -R o=-rwx ${PDP_HOME}/logs
+
+
+  ####@ Add the script to the service list
+  yaimlog INFO "Register /etc/init.d/argus-pdp..."
+  /sbin/chkconfig --add argus-pdp
+
+  ####@ Start the PDP service
+  yaimlog INFO "Starting PDP service..."
+
+  # PDP_HOME needs to exist in the environment to be able to start the service
+  PDP_HOME=${PDP_HOME} /etc/init.d/argus-pdp start
+
+  if [ $? -eq 1 ]; then
+    yaimlog ERROR "Error starting PDP service"
+    exit 1
+  fi
+
+  return 0
+
+}
+

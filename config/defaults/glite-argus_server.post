@@ -1,0 +1,100 @@
+##############################################################################
+# Copyright (c) Members of the EGEE Collaboration. 2004.
+# See http://www.eu-egee.org/partners/ for details on the copyright
+# holders.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS
+# OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+##############################################################################
+#
+# NAME :        glite-argus-server.pre
+#
+# DESCRIPTION : This configuration file contains the variables needed to configure the
+#               Authorization Framework whose default values depend on previously defined variables.
+#               They do not need to be changed by sys admins unless they are interested in a more 
+#               advanced configuration. This file should be used together with site-info.def and/or 
+#               services/glite-argus-server.
+#
+# AUTHORS :     Maria.Alandes.Pradillo@cern.ch
+#               valery.tschopp@switch.ch
+#               andrea.ceccanti@cnaf.infn.it
+#
+# NOTES :
+#
+# YAIM MODULE:  glite-yaim-argus-server
+#
+##############################################################################
+
+
+#########################
+# PAP related variables #
+#########################
+
+PAP_HOME=${PAP_HOME:-"/usr/share/argus/pap"}
+
+# Configuration files for PAP service
+PAP_CONF_INI=${PAP_CONF_INI:-"${PAP_HOME}/conf/pap_configuration.ini"}
+PAP_AUTHZ_INI=${PAP_AUTHZ_INI:-"${PAP_HOME}/conf/pap_authorization.ini"}
+
+# Default properties for the pap-admin client
+PAP_ADMIN_PROPS=${PAP_ADMIN_PROPS:-"${PAP_HOME}/conf/pap-admin.properties"}
+
+# This is a unique identifier for the PAP (URI). 
+# If a URL is used it need not resolve to any specific webpage.
+PAP_ENTITY_ID=${PAP_ENTITY_ID:-"http://${ARGUS_HOST}/pap"}
+
+# Path to the repository directory
+PAP_REPO_LOCATION=${PAP_REPO_LOCATION:-"${PAP_HOME}/repository"}
+
+#########################
+# PDP related variables #
+#########################
+
+PDP_HOME=${PDP_HOME:-"/usr/share/argus/pdp"}
+
+# Configuration files for PDP service
+PDP_CONF_INI=${PDP_CONF_INI:-"/etc/argus/pdp/pdp.ini"}
+
+# This is a unique identifier for the PEP. It must be a URI (URL or URN)
+# and the same entity ID should be used for all PEP instances that make
+# up a single logical PEP. If a URL is used it need not resolve to any
+# specific webpage.
+PDP_ENTITY_ID=${PDP_ENTITY_ID:-"http://${ARGUS_HOST}/pdp"}
+
+# Space separated list of PAP endpoint URLs. Endpoints will be tried in
+# turn until one returns a successful response. This provides limited
+# failover support. If more intelligent failover is necessary or load
+# balancing is required, a dedicated load-balancer/failover appliance should be used.
+PDP_PAP_ENDPOINTS=${PDP_PAP_ENDPOINTS:-"https://${PAP_HOST}:8150/pap/services/ProvisioningService"}
+
+#########################
+# PEP related variables #
+#########################
+
+PEP_HOME=${PEP_HOME:-"/usr/share/argus/pepd"}
+
+# Configuration files for PEP service
+PEP_CONF_INI=${PEP_CONF_INI:-"/etc/argus/pepd/pepd.ini"}
+
+# This is a unique identifier for the PEP. It must be a URI (URL or URN)
+# and the same entity ID should be used for all PEP instances that make
+# up a single logical PEP. If a URL is used it need not resolve to any
+# specific webpage.
+PEP_ENTITY_ID=${PEP_ENTITY_ID:-"http://${ARGUS_HOST}/pepd"}
+
+# Space separated list of PDP endpoint URLs. Endpoints will be tried in
+# turn until one returns a successful response. This provides limited
+# failover support. If more intelligent failover is necessary or load
+# balancing is required, a dedicated load-balancer/failover appliance should be used.
+PEP_PDP_ENDPOINTS=${PEP_PDP_ENDPOINTS:-"http://${PDP_HOST}:8152/authz"}
+

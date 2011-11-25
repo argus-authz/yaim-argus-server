@@ -1,0 +1,206 @@
+##############################################################################
+# Copyright (c) Members of the EGEE Collaboration. 2004. 
+# See http://www.eu-egee.org/partners/ for details on the copyright 
+# holders.  
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); 
+# you may not use this file except in compliance with the License. 
+# You may obtain a copy of the License at 
+#
+#    http://www.apache.org/licenses/LICENSE-2.0 
+#
+# Unless required by applicable law or agreed to in writing, software 
+# distributed under the License is distributed on an "AS IS" BASIS, 
+# WITHOUT WARRANTIES OR CONDITIONS 
+# OF ANY KIND, either express or implied. 
+# See the License for the specific language governing permissions and 
+# limitations under the License.
+##############################################################################
+#
+# NAME :        config_pap_service
+#
+# DESCRIPTION : This function configures the PAP server in the Autorization Framework. 
+#
+# AUTHORS :     Maria.Alandes@cern.ch
+#               valery.tschopp@switch.ch
+#               andrea.ceccanti@cnaf.infn.it
+#
+# NOTES : 
+#
+# YAIM MODULE:  glite-yaim-argus-server
+#                 
+##############################################################################
+
+function config_pap_service_check () {
+
+  requires $1 CONFIG_PAP PAP_HOME PAP_CONF_INI PAP_AUTHZ_INI PAP_POLL_INTERVAL \
+              PAP_ORDERING PAP_REPO_LOCATION PAP_CONSISTENCY_CHECK \
+              PAP_CONSISTENCY_CHECK_REPAIR PAP_HOST PAP_PORT PAP_SHUTDOWN_PORT PAP_SHUTDOWN_COMMAND \
+              X509_HOST_CERT X509_HOST_KEY PAP_ADMIN_DN PAP_ENTITY_ID
+  return $?
+
+}
+
+function config_pap_service_setenv () {
+  # $PAP_HOME/bin for the pap-admin commmand
+  yaimgridpath_append PATH ${PAP_HOME}/bin
+  yaimgridenv_set PAP_HOME ${PAP_HOME}
+
+}
+
+function config_pap_service () {
+
+  timestamp=`date +%Y%m%d%H%M`
+  datetime=`date +"%d/%m/%Y %H:%M"`
+  
+  if [ "x${CONFIG_PAP}" = "xno" ]; then
+  	yaimlog INFO "Skipping PAP configuration since CONFIG_PAP is set to 'no'"
+  	return
+  fi
+  
+  ####@ Checking whether JAVA is installed
+#  yaimlog DEBUG "Checking whether JAVA is installed"
+#  if [ ! -f /etc/java/java.conf ]; then
+#    yestr ${YEX_NOSUCHFILE}
+#    yaimlog ERROR "/etc/java/java.conf doesn't exist. Java is probably not installed !"
+#    yaimlog ERROR "${YERRORSTR}"
+#    exit ${YEX_NOSUCHFILE}
+#  fi
+
+  ####@ Checking whether PAP is actually installed
+  yaimlog DEBUG "Checking whether PAP is actually installed"
+  if [ ! -f ${PAP_HOME}/sbin/papctl ]; then
+    yaimlog ERROR "${PAP_HOME}/sbin/papctl doesn't exist. Please, make sure PAP is installed in your system"
+    yestr ${YEX_NOSUCHFILE}
+    yaimlog ERROR "${YERRORSTR}"
+    exit ${YEX_NOSUCHFILE}
+  fi
+
+  ####@ Stop PAP
+  yaimlog INFO "Stopping PAP service..."
+  # PAP_HOME needs to exist in the environment to be able to start the service
+  PAP_HOME=${PAP_HOME} ${PAP_HOME}/sbin/papctl stop
+  sleep 5
+
+  if [ "x${CONFIG_PAP}" = "xyes" ]; then
+    ####@ Making a backup copy of the configuration files
+    
+    yaimlog DEBUG "Making a backup copy of the configuration files"
+    cp ${PAP_CONF_INI} ${PAP_CONF_INI}.yaim${timestamp}
+    cp ${PAP_AUTHZ_INI} ${PAP_AUTHZ_INI}.yaim${timestamp}
+	cp ${PAP_ADMIN_PROPS} ${PAP_ADMIN_PROPS}.yaim${timestamp} 
+
+    ####@ Creating the ${PAP_CONF_INI} file
+    yaimlog INFO "Create the PAP ${PAP_CONF_INI} file"
+    cat <<EOF > ${PAP_CONF_INI}
+#
+# Configuration file created by YAIM on ${datetime}
+#
+# PAP configuration
+# 
+# Documentation: https://twiki.cern.ch/twiki/bin/view/EGEE/AuthZPAPConfig
+# 
+[paps]
+## Trusted PAPs will be listed here
+
+[paps:properties]
+
+poll_interval = ${PAP_POLL_INTERVAL}
+ordering = ${PAP_ORDERING}
+
+[repository]
+
+location = ${PAP_REPO_LOCATION}
+consistency_check = ${PAP_CONSISTENCY_CHECK}
+consistency_check.repair = ${PAP_CONSISTENCY_CHECK_REPAIR}
+
+[standalone-service]
+
+entity_id = ${PAP_ENTITY_ID}
+hostname = ${PAP_HOST}
+port = ${PAP_PORT}
+shutdown_port = ${PAP_SHUTDOWN_PORT}
+shutdown_command = ${PAP_SHUTDOWN_COMMAND}
+
+[security]
+
+certificate = ${X509_HOST_CERT}
+private_key = ${X509_HOST_KEY}
+
+EOF
+
+    ####@ Retrieving the DN of the host certificate
+    yaimlog DEBUG "Retrieving the DN of the host certificate"
+    host_dn=`openssl x509 -in ${X509_HOST_CERT} -subject -noout | sed 's/^subject= //'`
+
+    if [ "x{host_dn}" = "x" ]; then
+      yaimlog ERROR "Error when trying to retrieve the DN of the host certificate"
+      yaimlog ERROR "The failed command is: openssl x509 -in ${X509_HOST_CERT} -subject -noout | sed 's/^subject= //'"
+      exit 1
+    fi
+
+    ####@ Creating the ${PAP_AUTHZ_INI} file
+    yaimlog INFO "Create the PAP ${PAP_AUTHZ_INI} file"
+    cat <<EOF > ${PAP_AUTHZ_INI}
+#
+# Configuration file created by YAIM on ${datetime}
+#
+# PAP service access control
+# 
+# Documentation: https://twiki.cern.ch/twiki/bin/view/EGEE/AuthZPAPConfig
+# 
+[dn]
+"${PAP_ADMIN_DN}" : ALL
+"${host_dn}" : ALL
+
+[fqan]
+
+EOF
+	####@ Creating the ${PAP_ADMIN_PROPS} file
+    yaimlog INFO "Create the PAP ${PAP_ADMIN_PROPS} file"
+    cat <<EOF > ${PAP_ADMIN_PROPS}
+#
+# Configuration file created by YAIM on ${datetime}
+#
+# PAP admin client default properties
+# 
+# Documentation: https://twiki.cern.ch/twiki/bin/view/EGEE/AuthZPAPConfig
+#
+host=${PAP_HOST}
+port=${PAP_PORT}
+
+EOF
+
+fi
+
+
+  ####@ Fix files and directories permissions (TODO: use ETICS package.fileRights property)
+  yaimlog INFO "Fixing files and directory permissions in ${PAP_HOME}"
+  chmod -R o=-rwx ${PAP_HOME}/sbin
+  chmod -R o=-rwx ${PAP_HOME}/logs
+  chmod -R o=-rwx ${PAP_HOME}/conf
+  chmod o=+rx ${PAP_HOME}/conf
+  chmod o=+r ${PAP_HOME}/conf/attribute-mappings.ini
+  chmod o=+r ${PAP_HOME}/conf/pap-admin.properties
+  chmod o=+rx ${PAP_HOME}/conf/logging
+  chmod o=+rx ${PAP_HOME}/conf/logging/client
+  chmod o=+r ${PAP_HOME}/conf/logging/client/*
+
+
+  ####@ Add the script to the service list    
+  /sbin/chkconfig --add argus-pap
+
+  ####@ Start the PAP service
+  yaimlog INFO "Starting PAP service..."
+
+  # PAP_HOME needs to exist in the environment to be able to start the service
+  PAP_HOME=${PAP_HOME} /etc/rc.d/init.d/argus-pap start
+
+  if [ $? -eq 1 ]; then
+    yaimlog ERROR "Error starting PAP service"
+    exit 1
+  fi
+
+  return 0
+
+}
