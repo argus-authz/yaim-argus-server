@@ -83,7 +83,7 @@ CONFIG_PDP=yes
 
 # Set this variable to another value if PDP_HOST is not installed in the same
 # host as PAP and PEP.
-PDP_HOST=localhost
+PDP_HOST=${ARGUS_HOST}
 
 # PDP service port
 PDP_PORT=8152
