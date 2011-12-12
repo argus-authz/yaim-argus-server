@@ -98,6 +98,7 @@ retentionInterval = ${PDP_RETENTION_INTERVAL}
 servicePrivateKey = ${X509_HOST_KEY}
 serviceCertificate = ${X509_HOST_CERT}
 trustInfoDir = ${X509_CERT_DIR}
+enableSSL = true
 
 EOF
 
