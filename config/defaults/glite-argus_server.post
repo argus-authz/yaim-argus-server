@@ -96,5 +96,5 @@ PEP_ENTITY_ID=${PEP_ENTITY_ID:-"http://${ARGUS_HOST}/pepd"}
 # turn until one returns a successful response. This provides limited
 # failover support. If more intelligent failover is necessary or load
 # balancing is required, a dedicated load-balancer/failover appliance should be used.
-PEP_PDP_ENDPOINTS=${PEP_PDP_ENDPOINTS:-"http://${PDP_HOST}:8152/authz"}
+PEP_PDP_ENDPOINTS=${PEP_PDP_ENDPOINTS:-"https://${PDP_HOST}:8152/authz"}
 
