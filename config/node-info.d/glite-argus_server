@@ -31,7 +31,6 @@
 
 ARGUS_server_FUNCTIONS="
 config_host_certs
-config_crl
 config_edgusers
 config_vomsmap
 config_vomsdir
