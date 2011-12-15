@@ -1,0 +1,157 @@
+##############################################################################
+# Copyright (c) Members of the EGEE Collaboration. 2004. 
+# See http://www.eu-egee.org/partners/ for details on the copyright 
+# holders.  
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); 
+# you may not use this file except in compliance with the License. 
+# You may obtain a copy of the License at 
+#
+#    http://www.apache.org/licenses/LICENSE-2.0 
+#
+# Unless required by applicable law or agreed to in writing, software 
+# distributed under the License is distributed on an "AS IS" BASIS, 
+# WITHOUT WARRANTIES OR CONDITIONS 
+# OF ANY KIND, either express or implied. 
+# See the License for the specific language governing permissions and 
+# limitations under the License.
+##############################################################################
+#
+# NAME :        config_info_glue2_service_argus
+#
+# DESCRIPTION : This function configures the dynamic GLUE 2 service publisher
+#               for Argus services.
+#
+# AUTHORS :     valery.tschopp@switch.ch
+#
+# NOTES : 
+#
+# YAIM MODULE:  yaim-argus_server
+#                 
+##############################################################################
+
+config_info_glue2_service_argus_check () {
+  requires $1 SITE_NAME ARGUS_HOST
+}
+
+config_info_glue2_service_argus_setenv () {
+    yaimlog DEBUG "No environment setting"
+}
+
+config_info_glue2_service_argus () {
+
+  INFO_SERVICE_CONFIG=/etc/glite/info/service
+  INFO_SERVICE_BIN_PATH=/usr/bin
+  INFO_PROVIDER_PATH=/var/lib/bdii/gip/provider
+  
+  SERVICE_TYPE="emi.Argus"
+  SERVICE_HOST=${ARGUS_HOST}
+  
+  GLUE2_MULTI_SCRIPT="${INFO_SERVICE_BIN_PATH}/glite-info-glue2-multi"
+  if [ ! -f ${GLUE2_MULTI_SCRIPT} ]; then
+	yaimlog ERROR "Script ${GLUE2_MULTI_SCRIPT} not found."
+  fi
+
+  # TODO: generate this provider script
+  GLUE2_INFO_PROVIDER="${INFO_PROVIDER_PATH}/glite-info-glue2-provider-service-argus"
+
+  # Template and conf files
+  GLUE2_ARGUS_PAP_CONF_TEMPLATE="${INFO_SERVICE_CONFIG}/glite-info-glue2-argus-pap.conf.template"
+  GLUE2_ARGUS_PDP_CONF_TEMPLATE="${INFO_SERVICE_CONFIG}/glite-info-glue2-argus-pdp.conf.template"
+  GLUE2_ARGUS_PEP_CONF_TEMPLATE="${INFO_SERVICE_CONFIG}/glite-info-glue2-argus-pep.conf.template"
+  GLUE2_SERVICE_ARGUS_CONF_TEMPLATE="${INFO_SERVICE_CONFIG}/glite-info-glue2-service-argus.conf.template"
+
+  GLUE2_ARGUS_PAP_CONF_FILE="${INFO_SERVICE_CONFIG}/glite-info-glue2-argus-pap.conf"
+  GLUE2_ARGUS_PDP_CONF_FILE="${INFO_SERVICE_CONFIG}/glite-info-glue2-argus-pdp.conf"
+  GLUE2_ARGUS_PEP_CONF_FILE="${INFO_SERVICE_CONFIG}/glite-info-glue2-argus-pep.conf"
+  GLUE2_SERVICE_ARGUS_CONF_FILE="${INFO_SERVICE_CONFIG}/glite-info-glue2-service-argus.conf"
+
+  #
+  # glite-info-glue2-argus-pap.conf
+  # 
+  if [ ! -f ${GLUE2_ARGUS_PAP_CONF_TEMPLATE} ]; then
+  	yaimlog ERROR "The glue2 template ${GLUE2_ARGUS_PAP_CONF_TEMPLATE} not found."
+  	exit 1
+  fi
+
+  yaimlog DEBUG "Delete previous version of the ${GLUE2_ARGUS_PAP_CONF_FILE} if it exists"
+  rm -rf ${GLUE2_ARGUS_PAP_CONF_FILE}
+
+  yaimlog DEBUG "Create endpoint ${GLUE2_ARGUS_PAP_CONF_FILE}"
+  cp ${GLUE2_ARGUS_PAP_CONF_TEMPLATE} ${GLUE2_ARGUS_PAP_CONF_FILE}
+
+  GLUE2_ENDPOINT_CONF_FILES="${GLUE2_ARGUS_PAP_CONF_FILE}"
+  
+  #
+  # glite-info-glue2-argus-pdp.conf
+  # 
+  if [ ! -f ${GLUE2_ARGUS_PDP_CONF_TEMPLATE} ]; then
+  	yaimlog ERROR "The glue2 template ${GLUE2_ARGUS_PDP_CONF_TEMPLATE} not found."
+  	exit 1
+  fi
+
+  yaimlog DEBUG "Delete previous version of the ${GLUE2_ARGUS_PDP_CONF_FILE} if it exists"
+  rm -rf ${GLUE2_ARGUS_PDP_CONF_FILE}
+
+  yaimlog DEBUG "Create endpoint ${GLUE2_ARGUS_PDP_CONF_FILE}"
+  cp ${GLUE2_ARGUS_PDP_CONF_TEMPLATE} ${GLUE2_ARGUS_PDP_CONF_FILE}
+
+  GLUE2_ENDPOINT_CONF_FILES="${GLUE2_ENDPOINT_CONF_FILES},${GLUE2_ARGUS_PDP_CONF_FILE}"
+  
+  #
+  # glite-info-glue2-argus-pep.conf
+  # 
+  if [ ! -f ${GLUE2_ARGUS_PEP_CONF_TEMPLATE} ]; then
+  	yaimlog ERROR "The glue2 template ${GLUE2_ARGUS_PEP_CONF_TEMPLATE} not found."
+  	exit 1
+  fi
+
+  yaimlog DEBUG "Delete previous version of the ${GLUE2_ARGUS_PEP_CONF_FILE} if it exists"
+  rm -rf ${GLUE2_ARGUS_PEP_CONF_FILE}
+
+  yaimlog DEBUG "Create endpoint ${GLUE2_ARGUS_PEP_CONF_FILE}"
+  cp ${GLUE2_ARGUS_PEP_CONF_TEMPLATE} ${GLUE2_ARGUS_PEP_CONF_FILE}
+
+  GLUE2_ENDPOINT_CONF_FILES="${GLUE2_ENDPOINT_CONF_FILES},${GLUE2_ARGUS_PEP_CONF_FILE}"
+
+  #
+  # glite-info-glue2-service-argus.conf
+  # 
+  if [ ! -f ${GLUE2_SERVICE_ARGUS_CONF_TEMPLATE} ]; then
+  	yaimlog ERROR "The glue2 template ${GLUE2_SERVICE_ARGUS_CONF_TEMPLATE} not found."
+  	exit 1
+  fi
+
+  yaimlog DEBUG "Delete previous version of the ${GLUE2_SERVICE_ARGUS_CONF_FILE} if it exists"
+  rm -rf ${GLUE2_SERVICE_ARGUS_CONF_FILE}
+
+  yaimlog DEBUG "Create service ${GLUE2_SERVICE_ARGUS_CONF_FILE}"
+  cp ${GLUE2_SERVICE_ARGUS_CONF_TEMPLATE} ${GLUE2_SERVICE_ARGUS_CONF_FILE}
+
+  GLUE2_SERVICE_CONF_FILE="${GLUE2_SERVICE_ARGUS_CONF_FILE}"
+  
+  ###
+  
+  yaimlog DEBUG "Create the ${INFO_PROVIDER_PATH} in case it doesn't exist"
+  mkdir -p ${INFO_PROVIDER_PATH}
+  
+  ###
+  
+  yaimlog DEBUG "Create the ${GLUE2_INFO_PROVIDER} file"
+  yaimlog DEBUG "Endpoint conf files: ${GLUE2_ENDPOINT_CONF_FILES}"
+  yaimlog DEBUG "Service conf file: ${GLUE2_SERVICE_CONF_FILE} file"
+  
+  cat << EOF > ${GLUE2_INFO_PROVIDER}
+#!/bin/sh
+
+##
+# GLUE 2 for Argus
+##
+
+${GLUE2_MULTI_SCRIPT} ${GLUE2_ENDPOINT_CONF_FILES} ${GLUE2_SERVICE_CONF_FILE} $SITE_NAME
+
+EOF
+  
+  chmod +x ${GLUE2_INFO_PROVIDER}
+  return 0 
+}

@@ -26,7 +26,7 @@
 #
 # NOTES : 
 #
-# YAIM MODULE:  glite-yaim-pep-server
+# YAIM MODULE:  yaim-argus_server
 #                 
 ##############################################################################
 
@@ -128,19 +128,21 @@ opensslSubjectAttributeIDs = http://glite.org/xacml/attribute/subject-issuer urn
 opensslSubjectAttributeDatatypes = http://www.w3.org/2001/XMLSchema#string
 
 [GLITEXACMLPROFILE_PIP]
-parserClass = org.glite.authz.pep.pip.provider.AuthorizationProfilePIPIniConfigurationParser
+parserClass = org.glite.authz.pep.pip.provider.GLiteAuthorizationProfilePIPIniConfigurationParser
 vomsInfoDir = ${X509_VOMS_DIR}
 acceptedProfileIDs = http://glite.org/xacml/profile/grid-ce/1.0 http://glite.org/xacml/profile/grid-wn/1.0
 
-[WHITELIST_PIP]
-parserClass = org.glite.authz.pep.pip.provider.AttributeWhitelistPIPIniConfigurationParser
-acceptedSubjectAttributes = urn:oasis:names:tc:xacml:1.0:subject:key-info
+[COMMONXACMLPROFILE_PIP]
+parserClass = org.glite.authz.pep.pip.provider.CommonXACMLAuthorizationProfilePIPIniConfigurationParser
+vomsInfoDir = ${X509_VOMS_DIR}
+acceptedProfileIDs = http://dci-sec.org/xacml/profile/common-authz/1.1 
 
 #
 # Obligation Handlers (OH) configuration
 #
 [ACCOUNTMAPPER_OH]
 parserClass = org.glite.authz.pep.obligation.dfpmap.DFPMObligationHandlerConfigurationParser
+handledObligationId = http://glite.org/xacml/obligation/local-environment-map
 accountMapFile = ${GRIDMAPFILE} 
 groupMapFile = ${GROUPMAPFILE}
 gridMapDir = ${GRIDMAPDIR}
