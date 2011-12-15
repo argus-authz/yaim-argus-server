@@ -19,7 +19,7 @@
 #
 # NAME :        config_pep_service
 #
-# DESCRIPTION : This function configures the PEP daemon server in the Autorization Framework. 
+# DESCRIPTION : This function configures the Argus PEP server. 
 #
 # AUTHORS :     Maria.Alandes@cern.ch
 #               valery.tschopp@switch.ch
@@ -51,7 +51,7 @@ function config_pep_service () {
   datetime=`date +"%d/%m/%Y %H:%M"`
 
   if [ "x${CONFIG_PEP}" = "xno" ]; then
-  	yaimlog INFO "Skipping PEP configuration since CONFIG_PEP is set to 'no'"
+  	yaimlog INFO "Skipping Argus PEP configuration since CONFIG_PEP is set to 'no'"
   	return
   fi
   
@@ -72,7 +72,7 @@ function config_pep_service () {
 
 
   ####@ Stop PEP
-  yaimlog INFO "Stopping PEP daemon service..."
+  yaimlog INFO "Stopping Argus PEP Server service..."
   # PEP_HOME needs to exist in the environment to be able to start the service
   PEPD_HOME=${PEP_HOME} /usr/sbin/pepdctl stop
   sleep 5
@@ -83,7 +83,7 @@ function config_pep_service () {
     cp ${PEP_CONF_INI} ${PEP_CONF_INI}.yaim${timestamp}
 
     ####@ Creating the ${PEP_CONF_INI} file
-    yaimlog INFO "Create the PEP Server ${PEP_CONF_INI} file"
+    yaimlog INFO "Create the Argus PEP Server ${PEP_CONF_INI} file"
     cat <<EOF > ${PEP_CONF_INI}
 #
 # Configuration file created by YAIM on ${datetime}
@@ -163,13 +163,13 @@ EOF
 
 
   ####@ Start the PEP service
-  yaimlog INFO "Starting PEP Server service..."
+  yaimlog INFO "Starting Argus PEP Server service..."
 
   # PEP_HOME needs to exist in the environment to be able to start the service
   PEPD_HOME=${PEP_HOME} /etc/init.d/argus-pepd start
 
   if [ $? -eq 1 ]; then
-    yaimlog ERROR "Error starting PEP Server service"
+    yaimlog ERROR "Error starting Argus PEP Server service"
     exit 1
   fi
 

@@ -19,7 +19,7 @@
 #
 # NAME :        config_pap_service
 #
-# DESCRIPTION : This function configures the PAP server in the Autorization Framework. 
+# DESCRIPTION : This function configures the ARgus PAP service. 
 #
 # AUTHORS :     Maria.Alandes@cern.ch
 #               valery.tschopp@switch.ch
@@ -27,7 +27,7 @@
 #
 # NOTES : 
 #
-# YAIM MODULE:  glite-yaim-argus-server
+# YAIM MODULE:  yaim-argus_server
 #                 
 ##############################################################################
 
@@ -42,9 +42,11 @@ function config_pap_service_check () {
 }
 
 function config_pap_service_setenv () {
+  yaimlog DEBUG "No environment setting"
+
   # $PAP_HOME/bin for the pap-admin commmand
-  yaimgridpath_append PATH ${PAP_HOME}/bin
-  yaimgridenv_set PAP_HOME ${PAP_HOME}
+  #yaimgridpath_append PATH ${PAP_HOME}/bin
+  #yaimgridenv_set PAP_HOME ${PAP_HOME}
 
 }
 
@@ -54,7 +56,7 @@ function config_pap_service () {
   datetime=`date +"%d/%m/%Y %H:%M"`
   
   if [ "x${CONFIG_PAP}" = "xno" ]; then
-  	yaimlog INFO "Skipping PAP configuration since CONFIG_PAP is set to 'no'"
+  	yaimlog INFO "Skipping Argus PAP configuration since CONFIG_PAP is set to 'no'"
   	return
   fi
   
@@ -77,7 +79,7 @@ function config_pap_service () {
   fi
 
   ####@ Stop PAP
-  yaimlog INFO "Stopping PAP service..."
+  yaimlog INFO "Stopping Argus PAP service..."
   # PAP_HOME needs to exist in the environment to be able to start the service
   PAP_HOME=${PAP_HOME} ${PAP_HOME}/sbin/papctl stop
   sleep 5
@@ -91,7 +93,7 @@ function config_pap_service () {
 	cp ${PAP_ADMIN_PROPS} ${PAP_ADMIN_PROPS}.yaim${timestamp} 
 
     ####@ Creating the ${PAP_CONF_INI} file
-    yaimlog INFO "Create the PAP ${PAP_CONF_INI} file"
+    yaimlog INFO "Create the Argus PAP ${PAP_CONF_INI} file"
     cat <<EOF > ${PAP_CONF_INI}
 #
 # Configuration file created by YAIM on ${datetime}
@@ -140,7 +142,7 @@ EOF
     fi
 
     ####@ Creating the ${PAP_AUTHZ_INI} file
-    yaimlog INFO "Create the PAP ${PAP_AUTHZ_INI} file"
+    yaimlog INFO "Create the Argus PAP ${PAP_AUTHZ_INI} file"
     cat <<EOF > ${PAP_AUTHZ_INI}
 #
 # Configuration file created by YAIM on ${datetime}
@@ -157,7 +159,7 @@ EOF
 
 EOF
 	####@ Creating the ${PAP_ADMIN_PROPS} file
-    yaimlog INFO "Create the PAP ${PAP_ADMIN_PROPS} file"
+    yaimlog INFO "Create the Argus PAP ${PAP_ADMIN_PROPS} file"
     cat <<EOF > ${PAP_ADMIN_PROPS}
 #
 # Configuration file created by YAIM on ${datetime}
@@ -191,13 +193,13 @@ fi
   /sbin/chkconfig --add argus-pap
 
   ####@ Start the PAP service
-  yaimlog INFO "Starting PAP service..."
+  yaimlog INFO "Starting Argus PAP service..."
 
   # PAP_HOME needs to exist in the environment to be able to start the service
   PAP_HOME=${PAP_HOME} /etc/rc.d/init.d/argus-pap start
 
   if [ $? -eq 1 ]; then
-    yaimlog ERROR "Error starting PAP service"
+    yaimlog ERROR "Error starting Argus PAP service"
     exit 1
   fi
 

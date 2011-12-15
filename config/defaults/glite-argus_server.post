@@ -17,13 +17,13 @@
 # limitations under the License.
 ##############################################################################
 #
-# NAME :        glite-argus-server.pre
+# NAME :        glite-argus_server.post
 #
 # DESCRIPTION : This configuration file contains the variables needed to configure the
 #               Authorization Framework whose default values depend on previously defined variables.
 #               They do not need to be changed by sys admins unless they are interested in a more 
 #               advanced configuration. This file should be used together with site-info.def and/or 
-#               services/glite-argus-server.
+#               services/glite-argus_server.
 #
 # AUTHORS :     Maria.Alandes.Pradillo@cern.ch
 #               valery.tschopp@switch.ch
@@ -31,7 +31,7 @@
 #
 # NOTES :
 #
-# YAIM MODULE:  glite-yaim-argus-server
+# YAIM MODULE:  yaim-argus_server
 #
 ##############################################################################
 

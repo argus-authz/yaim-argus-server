@@ -17,15 +17,16 @@
 # limitations under the License.
 ##############################################################################
 #
-# NAME :        glite-argus-server
+# NAME :        glite-argus_server
 #
-# DESCRIPTION : This function list configures the Authorization framework.
+# DESCRIPTION : This function list configures the Argus services.
 #
 # AUTHORS :     Maria.Alandes.Pradillo@cern.ch
+#               valery.tschopp@switch.ch
 #
 # NOTES : 
 #
-# YAIM MODULE:  glite-yaim-argus-server
+# YAIM MODULE:  yaim-argus_server
 #
 ##############################################################################
 
@@ -37,4 +38,5 @@ config_vomsdir
 config_pap_service
 config_pdp_service
 config_pep_service
+config_info_glue2_service_argus
 "
