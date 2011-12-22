@@ -39,4 +39,5 @@ config_pap_service
 config_pdp_service
 config_pep_service
 config_info_glue2_service_argus
+config_bdii_5.2
 "
