@@ -35,7 +35,9 @@
 #
 ##############################################################################
 
+# BDII related variables
 SITE_NAME=${SITE_NAME:-"${ARGUS_HOST}"}
+BDII_DELETE_DELAY=${BDII_DELETE_DELAY:-"0"} 
 
 #########################
 # PAP related variables #
