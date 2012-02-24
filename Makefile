@@ -1,17 +1,14 @@
 prefix=/opt/glite
 package=glite-yaim-argus-server
-name=$Name: EMI $
-tag:=$(shell echo $(name) | sed 's/^[^:]*: //' )
-version:=$(shell echo "$(tag)" | sed 's/^.*R_//' | sed 's/_/\./g')
-release:=$(shell echo "$(version)" | sed 's/.*\.//')
-version:=$(shell echo "$(version)" | sed 's/\(.*\)\.[0-9]*/\1/')
+version:=1.5.1
+release:=1
 
 .PHONY: configure install clean rpm
 
 all: install
 
 install: 
-	@echo Installing $(package) in $(prefix)...
+	@echo Installing $(package) $(version)-$(release) in $(prefix)...
 	@mkdir -p $(prefix)/yaim/functions
 	@mkdir -p $(prefix)/yaim/node-info.d
 	@mkdir -p $(prefix)/yaim/defaults
