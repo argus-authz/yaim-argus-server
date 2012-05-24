@@ -4,13 +4,16 @@
 
 The `ARGUS_server` node type is available to configure the Argus service with YAIM.
 
-Description of all the Argus YAIM Configuration Variables.
+Description of all the Argus YAIM Configuration Variables. TODO link...
 
 ### Argus `site-info.def` Configuration
 
 Your `site-info.def` file for Argus must contain at least the following variable:
 
-    # Argus service hostname
+    # Site name (BDII)
+    SITE_NAME=mySiteName
+
+    # Argus service fully qualified hostname
     ARGUS_HOST=argus.example.org
 
     # PAP administrator DN allowed to use 'pap-admin' command
