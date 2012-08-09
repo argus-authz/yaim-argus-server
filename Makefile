@@ -35,7 +35,7 @@ dist:
 	@echo "Packaging sources"
 	rm -fr $(name)-$(version)
 	mkdir $(name)-$(version)
-	cp -r config $(name)-$(version)
+	cp -r src $(name)-$(version)
 	cp Makefile $(name)-$(version)
 	cp COPYRIGHT LICENSE README.md CHANGELOG $(name)-$(version)
 	test ! -f $(name)-$(version).tar.gz || rm $(name)-$(version).tar.gz
@@ -52,13 +52,13 @@ install:
 	@echo "$(glite_name) $(version)-$(release)" > $(glite_name)
 	install -m 0644 $(glite_name) $(DESTDIR)$(prefix)/yaim/etc/versions
 	install -d $(DESTDIR)$(prefix)/yaim/functions
-	install -m 0644 config/functions/config* $(DESTDIR)$(prefix)/yaim/functions
+	install -m 0644 src/functions/config* $(DESTDIR)$(prefix)/yaim/functions
 	install -d $(DESTDIR)$(prefix)/yaim/node-info.d
-	install -m 0644 config/node-info.d/glite-* $(DESTDIR)$(prefix)/yaim/node-info.d
+	install -m 0644 src/node-info.d/glite-* $(DESTDIR)$(prefix)/yaim/node-info.d
 	install -d $(DESTDIR)$(prefix)/yaim/defaults
-	install -m 0644 config/defaults/glite-* $(DESTDIR)$(prefix)/yaim/defaults
+	install -m 0644 src/defaults/glite-* $(DESTDIR)$(prefix)/yaim/defaults
 	install -d $(DESTDIR)${prefix}/yaim/examples/siteinfo/services
-	install -m 0644 config/services/glite-* $(DESTDIR)${prefix}/yaim/examples/siteinfo/services
+	install -m 0644 src/services/glite-* $(DESTDIR)${prefix}/yaim/examples/siteinfo/services
 
 rpm: dist
 	@echo "Building RPM in $(rpmbuild_dir)"
