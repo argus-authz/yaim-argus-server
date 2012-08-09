@@ -1,9 +1,9 @@
 Name: yaim-argus_server
 
-Version: 1.5.1
+Version: 1.5.2
 Release: 1%{?dist}
 
-Summary: Yaim ARGUS_server config
+Summary: Yaim ARGUS_server configuration
 
 License: ASL 2.0
 Group: System Environment/Libraries
@@ -18,7 +18,7 @@ Requires: glite-info-provider-service
 Requires: glite-yaim-bdii
 
 %description
-yaim configuration for the ARGUS_server nodetype (EMI)
+yaim configuration for the ARGUS_server node-type (EMI)
 
 
 %prep
