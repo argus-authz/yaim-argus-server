@@ -7,7 +7,7 @@ Summary: Yaim ARGUS_server config
 
 License: ASL 2.0
 Group: System Environment/Libraries
-URL: 
+URL: https://twiki.cern.ch/twiki/bin/view/EGEE/AuthorizationFramework
 
 Source: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
