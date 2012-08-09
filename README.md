@@ -1,10 +1,12 @@
-# YAIM module: ARGUS_server
+YAIM module: ARGUS_server
+=========================
 
-## Configuration with YAIM
+Configuration with YAIM
+-----------------------
 
 The `ARGUS_server` node type is available to configure the Argus service with YAIM.
 
-Description of all the Argus YAIM Configuration Variables. TODO link...
+Description of all the Argus YAIM Configuration variable is available https://twiki.cern.ch/twiki/bin/view/EGEE/ArgusEMIYaimConfiguration
 
 ### Argus `site-info.def` Configuration
 
@@ -29,7 +31,8 @@ Your `site-info.def` file for Argus must contain at least the following variable
     VO_DTEAM_VOMSES="'dteam voms.hellasgrid.gr 15004 /C=GR/O=HellasGrid/OU=hellasgrid.gr/CN=voms.hellasgrid.gr dteam' 'dteam voms2.hellasgrid.gr 15004 /C=GR/O=HellasGrid/OU=hellasgrid.gr/CN=voms2.hellasgrid.gr dteam'"
     VO_DTEAM_VOMS_CA_DN="'/C=GR/O=HellasGrid/OU=Certification Authorities/CN=HellasGrid CA 2006' '/C=GR/O=HellasGrid/OU=Certification Authorities/CN=HellasGrid CA 2006'"
 
-## Generate Argus Configuration
+Generate Argus Configuration
+----------------------------
 
 Run YAIM to generate the Argus configuration for your site: 
 
