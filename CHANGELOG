@@ -1,0 +1,112 @@
+#######################################################
+########### glite-yaim-argus-server_R_1_2_0_1 #########
+#######################################################
+
+18/08/2010 -> Valery Tschopp
+- New configuration pepd.ini generated for the PEP daemon:
+    + Generic AuthorizationProfile PIP replace WorkerNodeProfile PIP
+
+#######################################################
+########### glite-yaim-argus-server_R_1_1_0_3 #########
+#######################################################
+
+10/02/2010 -> Valery Tschopp
+- sleep 3 added after the PDP and PEPd stop call, because non-blocking.
+
+21/01/2010 -> Valery Tschopp
+- PAP_ENDPOINTS renamed to PDP_PAP_ENDPOINTS.
+- PDP_ENDPOINTS renamed to PEP_PDP_ENDPOINTS.
+- Duplicate PAP_HOST removed.
+- Local users are not needed and created anymore.
+
+19/01/2010 -> Valery Tschopp
+- Fix files and directory permissions
+
+15/01/2010 -> Andrea Ceccanti
+- Fix for bug #61077: PAP shutdown hook protected by password
+- Fix for bug #60042: Allow PAP entity ID to be set
+
+14/01/2010 -> Valery Tschopp
+- Fix for bug #60433: Added ARGUS_HOST variable to replace HOST.
+- Fix for bug #60444: /etc/init.d scripts are root protected.
+- Fix for bug #61079: PDP_ADMIN_PASSWORD and PEP_ADMIN_PASSWORD added protect shutdown/admin endpoint. PDP and PEPd shutdownPort config option renamed to adminPort.
+- Argus services control script are in the /opt/argus/(pap|pdp|pepd)/sbin directory.
+
+#######################################################
+########### glite-yaim-argus-server_R_1_0_0_3 #########
+#######################################################
+
+03/11/2009 ->
+
+by Maria Alandes
+
+- Modified endpoints as suggested by ARGUS developers
+
+#######################################################
+########### glite-yaim-argus-server_R_1_0_0_2 #########
+#######################################################
+
+30/10/2009 ->
+
+by Maria Alandes
+
+- After changing authz with argus in the main paths, the parser classes need to remain with authz.
+
+#######################################################
+########### glite-yaim-argus-server_R_1_0_0_1 #########
+#######################################################
+
+30/10/2009 ->
+
+by Maria Alandes
+
+- Changed the name of the module to glite-yaim-argus_server
+
+#######################################################
+########### glite-yaim-authz-server_R_1_0_1_2 #########
+#######################################################
+
+16/09/2009 ->
+
+by Maria Alandes
+
+config/functions/config_pep_service
+- Fix for bug #55537: Renamed pep to pepd init.d script and added also the export of PEP_HOME in the init.d script
+
+config/functions/config_pap_service
+- Fix for bug #55537: exported PAP_HOME in the init.d script
+
+config/defaults/glite-authz_server.post
+- Fix for bug #55536: Remove https and put http
+
+config/defaults/glite-authz_server.pre
+- Fix for bug #55536: Added hostname -f.
+
+config/node-info.d/glite-authz_server
+- Fix for bug #55536: config_users has been added.
+
+#######################################################
+########### glite-yaim-authz-server_R_1_0_1_1 #########
+#######################################################
+
+01/09/2009 -> 
+
+by Maria Alandes
+
+config/node-info.d/glite-authz_server
+- Fix for bug #53235: glite-authz_server needs config_vomsdir
+
+config/functions/config_pap_service
+- Fix for bug #53097: configuration should fail when java is not installed
+- Fix for bug #53482: stop asking for password. Now authz ini file is configures manually at the beginning.
+
+config/defaults/glite-authz_server.pre
+- Remove PAP_ADMIN CERT and KEY variables since they are not needed
+
+#######################################################
+########### glite-yaim-authz-server_R_1_0_0_1 #########
+#######################################################
+
+24/06/2009 -> 1st version
+
+by Maria Alandes
