@@ -57,7 +57,12 @@ rm -rf $RPM_BUILD_ROOT
 /opt/glite/yaim/defaults/glite-argus_server.post
 /opt/glite/yaim/defaults/glite-argus_server.pre
 
+%doc COPYRIGHT LICENSE README.md CHANGELOG
+
 %changelog
+* Fri Aug 3 2012 Valery Tschopp <valery.tschopp@switch.ch> 1.5.2-1
+- Self managed packaging with spec file.
+
 * Tue Apr 3 2012 Valery Tschopp <valery.tschopp@switch.ch> 1.5.1-1
 - Initial yaim ARGUS_server config for EMI 2.
 
