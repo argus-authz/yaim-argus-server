@@ -35,9 +35,10 @@ dist:
 	@echo "Packaging sources"
 	rm -fr $(name)-$(version)
 	mkdir $(name)-$(version)
-	cp -r src $(name)-$(version)
 	cp Makefile $(name)-$(version)
 	cp COPYRIGHT LICENSE README.md CHANGELOG $(name)-$(version)
+	cp -r fedora $(name)-$(version)
+	cp -r src $(name)-$(version)
 	test ! -f $(name)-$(version).tar.gz || rm $(name)-$(version).tar.gz
 	tar -czf $(name)-$(version).tar.gz $(name)-$(version)
 	rm -fr $(name)-$(version)
