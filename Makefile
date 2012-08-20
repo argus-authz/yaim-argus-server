@@ -32,7 +32,8 @@ tmp_dir=$(CURDIR)/tmp
 
 .PHONY: clean spec package dist rpm deb install
 
-all: install
+all: 
+	@echo "Nothing to compile ;)"
 
 clean:
 	rm -rf target $(rpmbuild_dir) $(debbuild_dir) $(tmp_dir) *.tar.gz tgz RPMS $(spec_file)
