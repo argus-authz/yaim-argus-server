@@ -22,9 +22,9 @@ release=1
 
 # glite prefix and name
 prefix=/opt/glite
-glite_name=glite-yaim-argus-server
+rpm_name=yaim-argus_server
 
-spec_file=fedora/$(name).spec
+spec_file=fedora/$(rpm_name).spec
 
 rpmbuild_dir=$(CURDIR)/rpmbuild
 debbuild_dir = $(CURDIR)/debbuild
@@ -59,8 +59,8 @@ dist: spec
 install: 
 	@echo "Installing $(glite_name) $(version)-$(release) in $(DESTDIR)$(prefix)..."
 	install -d $(DESTDIR)$(prefix)/yaim/etc/versions
-	echo "$(glite_name) $(version)-$(release)" > $(glite_name)
-	install -m 0644 $(glite_name) $(DESTDIR)$(prefix)/yaim/etc/versions
+	echo "$(name) $(version)-$(release)" > $(name)
+	install -m 0644 $(name) $(DESTDIR)$(prefix)/yaim/etc/versions
 	install -d $(DESTDIR)$(prefix)/yaim/functions
 	install -m 0644 src/functions/config* $(DESTDIR)$(prefix)/yaim/functions
 	install -d $(DESTDIR)$(prefix)/yaim/node-info.d
