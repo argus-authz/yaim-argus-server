@@ -15,7 +15,7 @@
 # limitations under the License.
 #############################################################################
 
-name=yaim-argus_server
+name=glite-yaim-argus-server
 
 version=1.5.2
 release=1
