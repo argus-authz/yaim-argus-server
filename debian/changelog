@@ -1,5 +1,5 @@
 glite-yaim-argus-server (1.5.2-1) unstable; urgency=low
 
-  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+  * Initial release for Debian
 
  -- Valery Tschopp <valery.tschopp@switch.ch>  Mon, 20 Aug 2012 13:56:36 +0200
