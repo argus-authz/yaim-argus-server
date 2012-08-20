@@ -16,41 +16,50 @@
 #############################################################################
 
 name=yaim-argus_server
-spec_file=fedora/$(name).spec
-version=$(shell grep "Version:" $(spec_file) | sed -e "s/Version://g" -e "s/[ \t]*//g")
+
+version=1.5.2
 release=1
-arch=noarch
-rpmbuild_dir=$(shell pwd)/rpmbuild
-stage_dir=$(shell pwd)/stage
 
 # glite prefix and name
 prefix=/opt/glite
 glite_name=glite-yaim-argus-server
 
-.PHONY: dist install clean rpm
+spec_file=fedora/$(name).spec
+
+rpmbuild_dir=$(CURDIR)/rpmbuild
+debbuild_dir = $(CURDIR)/debbuild
+tmp_dir=$(CURDIR)/tmp
+
+.PHONY: clean spec package dist rpm deb install
 
 all: install
 
-dist:
-	@echo "Packaging sources"
-	rm -fr $(name)-$(version)
-	mkdir $(name)-$(version)
-	cp Makefile $(name)-$(version)
-	cp COPYRIGHT LICENSE README.md CHANGELOG $(name)-$(version)
-	cp -r fedora $(name)-$(version)
-	cp -r src $(name)-$(version)
-	test ! -f $(name)-$(version).tar.gz || rm $(name)-$(version).tar.gz
-	tar -czf $(name)-$(version).tar.gz $(name)-$(version)
-	rm -fr $(name)-$(version)
-
 clean:
-	@echo "Cleaning..."
-	rm -fr $(name)-$(version) *.tar.gz rpmbuild RPMS tgz
+	rm -rf target $(rpmbuild_dir) $(debbuild_dir) $(tmp_dir) *.tar.gz tgz RPMS $(spec_file)
+
+
+spec:
+	@echo "Setting version and release in spec file: $(version)-$(release)"
+	sed -e 's#@@VERSION@@#$(version)#g' -e 's#@@RELEASE@@#$(release)#g' $(spec_file).in > $(spec_file)
+
+
+dist: spec
+	@echo "Packaging sources"
+	test ! -d $(tmp_dir) || rm -fr $(tmp_dir)
+	mkdir -p $(tmp_dir)/$(name)-$(version)
+	cp Makefile $(tmp_dir)/$(name)-$(version)
+	cp COPYRIGHT LICENSE README.md CHANGELOG $(tmp_dir)/$(name)-$(version)
+	cp -r fedora $(tmp_dir)/$(name)-$(version)
+	cp -r debian $(tmp_dir)/$(name)-$(version)
+	cp -r src $(tmp_dir)/$(name)-$(version)
+	test ! -f $(name)-$(version).tar.gz || rm $(name)-$(version).tar.gz
+	tar -C $(tmp_dir) -czf $(name)-$(version).tar.gz $(name)-$(version)
+	rm -fr $(tmp_dir)
 
 install: 
 	@echo "Installing $(glite_name) $(version)-$(release) in $(DESTDIR)$(prefix)..."
 	install -d $(DESTDIR)$(prefix)/yaim/etc/versions
-	@echo "$(glite_name) $(version)-$(release)" > $(glite_name)
+	echo "$(glite_name) $(version)-$(release)" > $(glite_name)
 	install -m 0644 $(glite_name) $(DESTDIR)$(prefix)/yaim/etc/versions
 	install -d $(DESTDIR)$(prefix)/yaim/functions
 	install -m 0644 src/functions/config* $(DESTDIR)$(prefix)/yaim/functions
@@ -61,19 +70,30 @@ install:
 	install -d $(DESTDIR)${prefix}/yaim/examples/siteinfo/services
 	install -m 0644 src/services/glite-* $(DESTDIR)${prefix}/yaim/examples/siteinfo/services
 
-rpm: dist
-	@echo "Building RPM in $(rpmbuild_dir)"
-	mv -v $(name)-$(version).tar.gz $(name)-$(version).src.tar.gz
+
+rpm:
+	test -f $(name)-$(version).tar.gz || make dist
+	@echo "Building RPM and SRPM in $(rpmbuild_dir)"
+	mv $(name)-$(version).tar.gz $(name)-$(version).src.tar.gz
 	mkdir -p $(rpmbuild_dir)/BUILD $(rpmbuild_dir)/RPMS $(rpmbuild_dir)/SOURCES $(rpmbuild_dir)/SPECS $(rpmbuild_dir)/SRPMS
 	cp $(name)-$(version).src.tar.gz $(rpmbuild_dir)/SOURCES/$(name)-$(version).tar.gz
-	rpmbuild -v -ba $(spec_file) --define "_topdir $(rpmbuild_dir)"
+	rpmbuild --nodeps -v -ba $(spec_file) --define "_topdir $(rpmbuild_dir)"
 
-etics: 
-	@echo "Publishing RPMs and tarballs"
-	mkdir -p RPMS tgz
-	test -f $(rpmbuild_dir)/RPMS/$(arch)/$(name)-$(version)-*.$(arch).rpm 
+
+deb:
+	test -f $(name)-$(version).tar.gz || make dist
+	@echo "Building Debian package in $(debbuild_dir)"
+	mv $(name)-$(version).tar.gz $(name)-$(version).src.tar.gz
+	mkdir -p $(debbuild_dir)
+	cp $(name)-$(version).src.tar.gz $(debbuild_dir)/$(name)_$(version).orig.tar.gz
+	tar -C $(debbuild_dir) -xzf $(name)-$(version).src.tar.gz
+	cd $(debbuild_dir)/$(name)-$(version) && debuild -us -uc 
+
+
+etics:
+	@echo "Publish RPMS, SRPMS and tarball"
 	test -f $(rpmbuild_dir)/SRPMS/$(name)-$(version)-*.src.rpm
+	mkdir -p tgz RPMS
+	cp target/*.tar.gz tgz
 	cp -r $(rpmbuild_dir)/RPMS/* $(rpmbuild_dir)/SRPMS/* RPMS
-	test -f $(name)-$(version).src.tar.gz && cp -v $(name)-$(version).src.tar.gz tgz
-	test ! -f $(name)-$(version).bin.tar.gz || cp -v $(name)-$(version).bin.tar.gz tgz/$(name)-$(version).tar.gz
 
