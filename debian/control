@@ -11,7 +11,7 @@ Vcs-Browser: https://github.com/argus-authz/yaim-argus-server.git
 Package: glite-yaim-argus-server
 Section: libs
 Architecture: all
-Depends: ${misc:Depends}
+Depends: glite-yaim-core, glite-info-provider-service, glite-yaim-bdii, ${misc:Depends}
 Description: gLite YAIM module: ARGUS_server
  Argus Authorization Service configuration modules 
  for gLite YAIM.
