@@ -1,1 +1,5 @@
-usr/lib
+opt/glite/yaim/etc/versions
+opt/glite/yaim/functions
+opt/glite/yaim/node-info.d
+opt/glite/yaim/defaults
+opt/glite/yaim/examples/siteinfo/services

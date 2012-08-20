@@ -4,20 +4,14 @@ Maintainer: Valery Tschopp <valery.tschopp@switch.ch>
 Build-Depends: debhelper (>= 7.0.50~)
 Standards-Version: 3.8.4
 Section: libs
-Homepage: <insert the upstream URL, if relevant>
-#Vcs-Git: git://git.debian.org/collab-maint/glite-yaim-argus-server.git
-#Vcs-Browser: http://git.debian.org/?p=collab-maint/glite-yaim-argus-server.git;a=summary
+Homepage: https://twiki.cern.ch/twiki/bin/view/EGEE/ArgusEMIDeployment#Configuration_with_YAIM
+Vcs-Git: git://github.com/argus-authz/yaim-argus-server.git
+Vcs-Browser: https://github.com/argus-authz/yaim-argus-server.git
 
-Package: glite-yaim-argus-server-dev
-Section: libdevel
-Architecture: any
-Depends: glite-yaim-argus-serverBROKEN (= ${binary:Version})
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
-
-Package: glite-yaim-argus-serverBROKEN
+Package: glite-yaim-argus-server
 Section: libs
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Architecture: all
+Depends: ${misc:Depends}
+Description: gLite YAIM module: ARGUS_server
+ Argus Authorization Service configuration modules 
+ for gLite YAIM.
