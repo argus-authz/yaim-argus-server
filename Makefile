@@ -28,6 +28,7 @@ spec_file=fedora/$(rpm_name).spec
 
 rpmbuild_dir=$(CURDIR)/rpmbuild
 debbuild_dir = $(CURDIR)/debbuild
+tgz_dir= $(CURDIR)/tgz
 tmp_dir=$(CURDIR)/tmp
 
 .PHONY: clean spec package dist rpm deb install
@@ -36,7 +37,7 @@ all:
 	@echo "Nothing to compile ;)"
 
 clean:
-	rm -rf target $(rpmbuild_dir) $(debbuild_dir) $(tmp_dir) *.tar.gz tgz RPMS $(spec_file)
+	rm -rf target $(rpmbuild_dir) $(debbuild_dir) $(tmp_dir) *.tar.gz $(tgz_dir) RPMS $(spec_file)
 
 
 spec:
@@ -72,12 +73,21 @@ install:
 	install -m 0644 src/services/glite-* $(DESTDIR)${prefix}/yaim/examples/siteinfo/services
 
 
-rpm:
+pre_rpmbuild:
 	test -f $(name)-$(version).tar.gz || make dist
-	@echo "Building RPM and SRPM in $(rpmbuild_dir)"
+	@echo "Preparing for rpmbuild in $(rpmbuild_dir)"
 	mv $(name)-$(version).tar.gz $(name)-$(version).src.tar.gz
 	mkdir -p $(rpmbuild_dir)/BUILD $(rpmbuild_dir)/RPMS $(rpmbuild_dir)/SOURCES $(rpmbuild_dir)/SPECS $(rpmbuild_dir)/SRPMS
 	cp $(name)-$(version).src.tar.gz $(rpmbuild_dir)/SOURCES/$(name)-$(version).tar.gz
+
+
+srpm: pre_rpmbuild
+	@echo "Building SRPM in $(rpmbuild_dir)"
+	rpmbuild --nodeps -v -bs $(spec_file) --define "_topdir $(rpmbuild_dir)"
+
+
+rpm: pre_rpmbuild
+	@echo "Building RPM/SRPM in $(rpmbuild_dir)"
 	rpmbuild --nodeps -v -ba $(spec_file) --define "_topdir $(rpmbuild_dir)"
 
 
@@ -92,9 +102,19 @@ deb:
 
 
 etics:
-	@echo "Publish RPMS, SRPMS and tarball"
-	test -f $(rpmbuild_dir)/SRPMS/$(name)-$(version)-*.src.rpm
-	mkdir -p tgz RPMS
-	cp target/*.tar.gz tgz
-	cp -r $(rpmbuild_dir)/RPMS/* $(rpmbuild_dir)/SRPMS/* RPMS
+	@echo "Publish SRPM/RPM/Debian/tarball"
+	mkdir -p RPMS $(tgz_dir)
+	test ! -f $(name)-$(version).src.tar.gz || cp -v $(name)-$(version).src.tar.gz $(tgz_dir)
+	test ! -f $(rpmbuild_dir)/SRPMS/$(rpm_name)-$(version)-*.src.rpm || cp -v $(rpmbuild_dir)/SRPMS/$(rpm_name)-$(version)-*.src.rpm RPMS
+	if [ -f $(rpmbuild_dir)/RPMS/*/$(rpm_name)-$(version)-*.rpm ] ; then \
+		cp -v $(rpmbuild_dir)/RPMS/*/$(rpm_name)-$(version)-*.rpm RPMS ; \
+		test ! -d $(tmp_dir) || rm -fr $(tmp_dir) ; \
+		mkdir -p $(tmp_dir) ; \
+		cd $(tmp_dir) ; \
+		rpm2cpio $(rpmbuild_dir)/RPMS/*/$(rpm_name)-$(version)-*.rpm | cpio -idm ; \
+		tar -C $(tmp_dir) -czf $(name)-$(version).tar.gz * ; \
+		mv -v $(name)-$(version).tar.gz $(tgz_dir) ; \
+		rm -fr $(tmp_dir) ; \
+	fi
+
 
