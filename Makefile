@@ -15,15 +15,15 @@
 # limitations under the License.
 #############################################################################
 
-name=glite-yaim-argus-server
-
-version=1.6.0
-release=1
+name = yaim-argus-server
+version = 1.6.0
+release = 1
 
 # glite prefix and name
-prefix=/opt/glite
+prefix = /opt/glite
+glite_name = glite-$(name)
 
-tmp_dir=$(CURDIR)/tmp
+tmp_dir = $(CURDIR)/tmp
 
 all: 
 	@echo "Nothing to compile ;)"
