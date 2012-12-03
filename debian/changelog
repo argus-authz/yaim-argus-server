@@ -1,5 +1,0 @@
-glite-yaim-argus-server (1.5.2-1) unstable; urgency=low
-
-  * Initial release for Debian (Closes: #23482)
-
- -- Valery Tschopp <valery.tschopp@switch.ch>  Mon, 20 Aug 2012 13:56:36 +0200
