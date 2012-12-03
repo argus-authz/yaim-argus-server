@@ -47,8 +47,8 @@ dist:
 install: 
 	@echo "Installing $(glite_name) $(version)-$(release) in $(DESTDIR)$(prefix)..."
 	install -d $(DESTDIR)$(prefix)/yaim/etc/versions
-	echo "$(name) $(version)-$(release)" > $(name)
-	install -m 0644 $(name) $(DESTDIR)$(prefix)/yaim/etc/versions
+	echo "$(name) $(version)-$(release)" > $(glite_name)
+	install -m 0644 $(glite_name) $(DESTDIR)$(prefix)/yaim/etc/versions
 	install -d $(DESTDIR)$(prefix)/yaim/functions
 	install -m 0644 src/functions/config* $(DESTDIR)$(prefix)/yaim/functions
 	install -d $(DESTDIR)$(prefix)/yaim/node-info.d
