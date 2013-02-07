@@ -25,17 +25,18 @@
 # AUTHORS :     Maria.Alandes.Pradillo@cern.ch
 #               valery.tschopp@switch.ch
 #
-# NOTES :
+# DOCUMENTATION:
+#   https://twiki.cern.ch/twiki/bin/view/EGEE/ArgusEMIDeployment#Configuration_with_YAIM
+#   https://twiki.cern.ch/twiki/bin/view/EGEE/ArgusEMIYaimConfiguration
 #
-# YAIM MODULE:  glite-yaim-argus-server
-#
-##############################################################################
+
+
 
 ##########################
 # ARGUS general variable #
 ##########################
 
-# Site name
+# BDII site name
 SITE_NAME=MySiteName
 
 # Fully qualified hostname of the host where the Argus service is installed
