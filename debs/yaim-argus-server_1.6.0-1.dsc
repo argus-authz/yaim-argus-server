@@ -11,10 +11,10 @@ Vcs-Git: git://github.com/argus-authz/yaim-argus-server.git
 Build-Depends: debhelper (>= 7.0.50~)
 Checksums-Sha1: 
  0a87b9ca113eb4ca0d02a4deb4e6c0fd160358fa 12818 yaim-argus-server_1.6.0.orig.tar.gz
- 97ceb14661a6122a7030c817e5f476bb8581abbe 2021 yaim-argus-server_1.6.0-1.debian.tar.gz
+ d0c2a9b9f83c295c38313a5598a65159e45f9373 2465 yaim-argus-server_1.6.0-1.debian.tar.gz
 Checksums-Sha256: 
  ba0ddd4ec08382efe969eb9ddd0004e16088d3429437d58c7aadd303ea54315f 12818 yaim-argus-server_1.6.0.orig.tar.gz
- 49bc48f949e25ccede81601aa82aa886661ead335da2db90cfd334f1215b3252 2021 yaim-argus-server_1.6.0-1.debian.tar.gz
+ b300592c479ea1dff06af31b14b3a206deb1f6d67c7c6f4ee7254f5b99ce4182 2465 yaim-argus-server_1.6.0-1.debian.tar.gz
 Files: 
  88f006b5899d2e77f70d87b9f5d242d1 12818 yaim-argus-server_1.6.0.orig.tar.gz
- 96a1aef152694b195b61de8551145032 2021 yaim-argus-server_1.6.0-1.debian.tar.gz
+ 25fed82495f0cdff6fb32b9d1bedf457 2465 yaim-argus-server_1.6.0-1.debian.tar.gz
