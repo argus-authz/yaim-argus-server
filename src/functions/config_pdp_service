@@ -62,6 +62,13 @@ function config_pdp_service () {
     exit ${YEX_NOSUCHFILE}
   fi
 
+  ####@ Check if TLS protocol has been defined
+  if [[ -z "${PDP_TLS_PROTOCOL}" ]]; then
+    TLS_PROTOCOL="TLS"
+  else
+    TLS_PROTOCOL="${PDP_TLS_PROTOCOL}"
+  fi
+
   ####@ Stop PDP
   yaimlog INFO "Stopping Argus PDP service..."
   # PDP_HOME needs to exist in the environment to be able to start the service
@@ -99,6 +106,7 @@ servicePrivateKey = ${X509_HOST_KEY}
 serviceCertificate = ${X509_HOST_CERT}
 trustInfoDir = ${X509_CERT_DIR}
 enableSSL = true
+tlsProtocol = ${TLS_PROTOCOL}
 
 EOF
 

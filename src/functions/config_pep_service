@@ -70,6 +70,12 @@ function config_pep_service () {
     exit ${YEX_NOSUCHFILE}
   fi
 
+  ####@ Check if TLS protocol has been defined
+  if [[ -z "${PEP_TLS_PROTOCOL}" ]]; then
+    TLS_PROTOCOL="TLS"
+  else
+    TLS_PROTOCOL="${PEP_TLS_PROTOCOL}"
+  fi
 
   ####@ Stop PEP
   yaimlog INFO "Stopping Argus PEP Server service..."
@@ -111,6 +117,7 @@ serviceCertificate = ${X509_HOST_CERT}
 trustInfoDir = ${X509_CERT_DIR}
 enableSSL = true
 requireClientCertAuthentication = true
+tlsProtocol = ${TLS_PROTOCOL}
 
 #
 # Policy Information Points (PIP) configuration

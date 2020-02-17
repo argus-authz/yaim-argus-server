@@ -97,6 +97,8 @@ PDP_ADMIN_PASSWORD=pdpadmin_`date +%Y%m%d%H%M%S`
 # again call out to the PAP and retrieve the policy
 PDP_RETENTION_INTERVAL=240
 
+PDP_TLS_PROTOCOL=TLS
+
 #########################
 # PEP related variables #
 #########################
@@ -114,6 +116,8 @@ PEP_PORT=8154
 # PEP dameon admin service port and password for commands (shutdown, clear cache, ...)
 PEP_ADMIN_PORT=8155
 PEP_ADMIN_PASSWORD=pepdadmin_`date +%Y%m%d%H%M%S`
+
+PEP_TLS_PROTOCOL=TLS
 
 # The maximum number of responses from any PDP that will be cached. 
 # Setting this value to 0 (zero) will disable caching. 
